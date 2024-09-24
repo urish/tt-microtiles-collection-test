@@ -31,8 +31,8 @@ jobs:
           - tt_um_wokwi_394898807123828737
           - tt_um_wokwi_395034561853515777
           - tt_um_wokwi_395054466384583681
-          - tt_um_wokwi_395054508867644417
-          - tt_um_wokwi_395054564978002945
+          # - tt_um_wokwi_395054508867644417 # skip: uses uio
+          # - tt_um_wokwi_395054564978002945 # skip: uses uio
           - tt_um_wokwi_395054820631340033
           - tt_um_wokwi_395054823569451009
           - tt_um_wokwi_395054823837887489
@@ -40,23 +40,23 @@ jobs:
           - tt_um_wokwi_395055341723330561
           - tt_um_wokwi_395055351144787969
           - tt_um_wokwi_395055359324730369
-          - tt_um_wokwi_395055455727667201
+          # - tt_um_wokwi_395055455727667201 # skip: uses uio
           - tt_um_wokwi_395055722430895105
           - tt_um_wokwi_395058308283408385
           - tt_um_wokwi_395061443288867841
-          - tt_um_wokwi_395134712676183041
+          # - tt_um_wokwi_395134712676183041 # skip: uses uio
           - tt_um_wokwi_395142547244224513
           - tt_um_wokwi_395179352683141121
-          - tt_um_wokwi_395263962779770881
+          # - tt_um_wokwi_395263962779770881 # skip: high utilization (185.46%)
           - tt_um_wokwi_395355133883896833
-          - tt_um_wokwi_395357890431011841
+          # - tt_um_wokwi_395357890431011841 # skip: high utilization (299.64%)
           - tt_um_wokwi_395414987024660481
           - tt_um_wokwi_395444977868278785
           - tt_um_wokwi_395514572866576385
           - tt_um_wokwi_395522292785089537
-          - tt_um_wokwi_395567106413190145
+          # - tt_um_wokwi_395567106413190145 # skip: uses uio
           - tt_um_wokwi_395599496098067457
-          - tt_um_wokwi_395614106833794049
+          # - tt_um_wokwi_395614106833794049 # skip: uses uio
           - tt_um_wokwi_395615790979120129
           - tt_um_wokwi_395618714068432897
           # tt08:
