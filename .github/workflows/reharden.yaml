@@ -21,7 +21,7 @@ jobs:
           - tt_um_wokwi_408118380088342529
           - tt_um_wokwi_408216451206371329
           - tt_um_wokwi_408231820749720577
-          - tt_um_wokwi_408237988946759681
+          # - tt_um_wokwi_408237988946759681 # skip: uses uio
 
     runs-on: ubuntu-latest
     env:
