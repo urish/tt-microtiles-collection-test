@@ -94,8 +94,5 @@ module tt_um_wokwi_407306064811090945(
   ddr_input #(.N(3)) ddr_input3( .rst_n(rst_n), .d(ui_in[1]), .clk(clk), .q(uo_out[1]) );
   ddr_input #(.N(5)) ddr_input5( .rst_n(rst_n), .d(ui_in[2]), .clk(clk), .q(uo_out[2]) );
   ddr_input #(.N(7)) ddr_input7( .rst_n(rst_n), .d(ui_in[3]), .clk(clk), .q(uo_out[3]) );
-    
-  // List all unused inputs to prevent warnings
-  wire _unused = &{ena, 1'b0};
 
 endmodule
