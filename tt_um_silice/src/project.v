@@ -15,10 +15,6 @@
 module tt_um_silice (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
-    output wire [7:0] uio_out,  // IOs: Output path
-    output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-    input  wire       ena,      // always 1 when the design is powered, so you can ignore it
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
@@ -36,9 +32,7 @@ module tt_um_silice (
     .in_ui(ui_in),
     .out_uo(uo_out),
 
-    .inout_uio_i(uio_in),
-    .inout_uio_o(uio_out),
-    .inout_uio_oe(uio_oe),
+    .inout_uio_i(8'b0),
 
     .in_run(1'b1),
     .reset(~rst_n_q),
