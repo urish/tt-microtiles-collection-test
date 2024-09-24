@@ -23,7 +23,7 @@ jobs:
           - tt_um_wokwi_392873974467527681
           - tt_um_wokwi_393815624518031361
           # - tt_um_wokwi_394618582085551105 # skip: uses uio
-          - tt_um_wokwi_394640918790880257
+          # - tt_um_wokwi_394640918790880257 # skip: high utilization (170.24%)
           - tt_um_wokwi_394704587372210177
           - tt_um_wokwi_394707429798790145
           - tt_um_wokwi_394830069681034241
