@@ -76,6 +76,9 @@ jobs:
           - tt_um_wokwi_397774697322214401
           - tt_um_wokwi_399169514887574529
           # tt08:
+          - tt_um_emmyxu_obstacle_detection
+          - tt_um_fountaincoder_top_ad
+          - tt_um_ring_divider
           - tt_um_wokwi_407306064811090945
           - tt_um_wokwi_407760296956596225
           - tt_um_wokwi_407852791999030273
