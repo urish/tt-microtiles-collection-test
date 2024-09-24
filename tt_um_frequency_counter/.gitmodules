@@ -1,3 +1,0 @@
-[submodule "src/ssd1306_oled_frequency_counter"]
-	path = src/ssd1306_oled_frequency_counter
-	url = https://github.com/embelon/ssd1306_oled_frequency_counter

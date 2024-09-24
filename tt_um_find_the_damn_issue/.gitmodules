@@ -1,3 +1,0 @@
-[submodule "libs/gatery"]
-	path = libs/gatery
-	url = ../gatery.git

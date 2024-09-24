@@ -1,3 +1,0 @@
-pytest==8.2.2
-cocotb==1.8.1
-Pillow==9.0.1

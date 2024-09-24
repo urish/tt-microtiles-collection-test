@@ -1,4 +1,0 @@
-pytest==8.2.2
-cocotb==1.8.1
-pillow==10.3.0
-tqdm==4.66.5

@@ -1,3 +1,0 @@
-read_verilog src/hvsync_generator.v src/audio.v src/video.v src/project.v src/iceshim.v
-synth_ice40 -top iceshim
-write_json munch.json
