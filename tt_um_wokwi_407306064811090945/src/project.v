@@ -82,17 +82,11 @@ endmodule
 module tt_um_wokwi_407306064811090945(
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
-    output wire [7:0] uio_out,  // IOs: Output path
-    output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-    input  wire       ena,      // always 1 when the design is powered, so you can ignore it
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
 
   assign uo_out[7:5] = {clk,2'b11}; 
-  assign uio_out = 0;
-  assign uio_oe  = 0;
 
   dff d0(.d(ui_in[4]),.rst_n(rst_n),.clk(clk),.q(uo_out[4]));
 
