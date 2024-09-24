@@ -1,0 +1,56 @@
+name: wokwi_test
+on: [push, workflow_dispatch]
+jobs:
+  wokwi_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Checkout tt tools repo
+        uses: actions/checkout@v3
+        with:
+          repository: tinytapeout/tt-support-tools
+          path: tt
+          ref: tt07
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: |
+          python --version
+          python -m pip install -r test/requirements.txt 
+          python -m pip install -r tt/requirements.txt 
+
+      - name: Install iverilog
+        run: |
+          sudo apt-get install -y iverilog
+
+      - name: Fetch Verilog and Build Config
+        run: ./tt/tt_tool.py --create-user-config
+
+      - name: Check the Truthtable Exists
+        id: check_files
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "src/truthtable.md"
+
+      - name: Test
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          cd src
+          unset PYTHONHOME
+          echo "PYTHONPATH: $PYTHONPATH"
+          make clean
+          make
+          ! grep failure results.xml
+
+      - name: Upload VCD
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-vcd
+          path: src/*.vcd
