@@ -128,6 +128,9 @@ jobs:
           git config user.name "Tiny Tapeout Bot"
           git commit --allow-empty -m "Dummy commit"
 
+          if [ -f src/config.tcl ]; then
+            rm src/config.tcl
+          fi
           cp ../golden_config.json src/config.json
 
           python tt/tt_tool.py --create-user-config --harden --openlane2
