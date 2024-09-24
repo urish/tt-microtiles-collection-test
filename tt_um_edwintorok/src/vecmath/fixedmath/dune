@@ -1,0 +1,10 @@
+(library
+ (name fixedmath)
+ (libraries
+  vecmath_core
+  sexplib
+  hardcaml_fixed_point
+  hardcaml_circuits
+  hardcaml)
+ (preprocess
+  (pps ppx_jane ppx_hardcaml)))

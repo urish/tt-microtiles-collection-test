@@ -1,0 +1,3 @@
+== FPGA Prototype for Demoscene Entry
+
+For a Digilent Arty A7 board with a XESS VGA module attached to `JA` and `JB` and PWM to `JC`.

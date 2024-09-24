@@ -1,0 +1,33 @@
+# 12 MHz clock (from Pico)
+set_io clk_ext          35
+
+# UART (connected to Pico)
+set_io uart_rx          27
+set_io uart_tx          25
+
+# Onboard LEDs
+set_io led_blue         39
+set_io led_green        40
+set_io led_red          41
+
+# Frequency to be measured
+set_io clk_x_in         23
+
+# OLED LCD
+set_io oled_vbatn_out   32
+set_io oled_vcdn_out  	28
+set_io oled_csn_out		43
+set_io oled_dc_out		42
+set_io oled_clk_out		31
+set_io oled_mosi_out	38
+set_io oled_rstn_out    36
+
+# additional io / debug
+set_io dbg_7            3
+set_io dbg_6            4
+set_io dbg_5            48
+set_io dbg_4            2
+set_io dbg_3            46
+set_io dbg_2            47
+set_io dbg_1            44
+set_io dbg_0            45

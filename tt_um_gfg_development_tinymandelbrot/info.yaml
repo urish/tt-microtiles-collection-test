@@ -1,0 +1,62 @@
+# Tiny Tapeout project information
+project:
+  title:        "TinyMandelbrot"      # Project title
+  author:       "Gerrit Grutzeck"      # Your name
+  discord:      "liggi.iggil"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
+  description:  "A mandelbrot generator"      # One line description of what your project does
+  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
+  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+
+  # How many tiles your design occupies? A single tile is about 167x108 uM.
+  tiles: "micro"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
+
+  # Your top module name must start with "tt_um_". Make it unique by including your github username:
+  top_module:  "tt_um_gfg_development_tinymandelbrot"
+
+  # List your project's source files here.
+  # Source files must be in ./src and you must list each source file separately, one per line.
+  # Don't forget to also update `PROJECT_SOURCES` in test/Makefile.
+  source_files:
+    - "color_map.v"
+    - "vga_rp2040_framebuffer.v"
+    - "vga_timing.v"
+    - "bit_serial_mult.v"
+    - "radix4_serial_mult.v"
+    - "mandelbrot_alu.v"
+    - "mandelbrot.v"
+    - "project.v"
+
+# The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
+pinout:
+  # Inputs
+  ui[0]: "serial enable"
+  ui[1]: "serial data"
+  ui[2]: "serial clock"
+  ui[3]: "output select"
+  ui[4]: "frame data[0]"
+  ui[5]: "frame data[1]"
+  ui[6]: "frame data[2]"
+  ui[7]: "frame data[3]"
+
+  # Outputs
+  uo[0]: "R[1] or ctr[0]"
+  uo[1]: "G[1] or ctr[0]"
+  uo[2]: "B[1] or ctr[0]"
+  uo[3]: "vsync or ctr[0]"
+  uo[4]: "R[0] or new counter"
+  uo[5]: "G[0]"
+  uo[6]: "B[0]"
+  uo[7]: "hsync"
+
+  # Bidirectional pins
+  uio[0]: "write data[0]"
+  uio[1]: "write data[1]"
+  uio[2]: "write data[2]"
+  uio[3]: "write data[3]"
+  uio[4]: "reset write pointer"
+  uio[5]: "write data"
+  uio[6]: "reset read pointer"
+  uio[7]: "read"
+
+# Do not change!
+yaml_version: 6

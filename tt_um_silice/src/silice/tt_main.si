@@ -1,0 +1,34 @@
+// SL 2024-08-16 @sylefeb
+// ========================================================
+//
+// ========================================================
+// https://github.com/sylefeb/Silice
+// MIT license, see LICENSE_MIT in Silice repo root
+// ========================================================
+
+$include('vga_demo.si')
+
+unit main(
+  input   uint8 ui,
+  output  uint8 uo,
+  inout   uint8 uio
+) {
+  vga_demo demo;
+
+  always {
+    uo[7,1] = demo.video_hs;
+    uo[3,1] = demo.video_vs;
+    uo[4,1] = demo.video_r[0,1];
+    uo[0,1] = demo.video_r[1,1];
+    uo[5,1] = demo.video_g[0,1];
+    uo[1,1] = demo.video_g[1,1];
+    uo[6,1] = demo.video_b[0,1];
+    uo[2,1] = demo.video_b[1,1];
+
+    uio.oenable = {1b1,7b0};
+    uio.o[7,1]  = demo.audio1;
+  }
+
+}
+
+// --------------------------------------------------

@@ -1,0 +1,445 @@
+// SL 2024-08-16 @sylefeb
+// ========================================================
+//
+// ========================================================
+// https://github.com/sylefeb/Silice
+// MIT license, see LICENSE_MIT in Silice repo root
+// ========================================================
+
+/*
+SYSTEM REPORT:
+. NO CPU
+. NO RAM
+
+LS
+. NO FILESYSTEM
+HUH?
+. TYPE HELP
+HELP
+. NO ENTRY
+WHAT? DO SOMETHING
+. OK
+---------
+BOOTING EXOSOLAR PROBE
+VIDEO FEED ON
+WARPING!
+
+WARNING WARNING
+LOOSING CONTROL
+---------
+
+WELCOME TO THE WARPZONE
+THIS EFFECT NORALLY USES PRECOMP TABLE
+HUGE AND UGLY
+HERE RACING THE BEAM
+HOW? CORDIC MAGIC!
+PIPELINED THREE STAGES PLUS TRICKS
+HOPE YOU ENJOYED!
+@SYLEFEB
+
+"WARP": distort with tunnel? !!
+
+TODO: test with uninitialized everywhere
+TODO: dither as logic
+*/
+
+// Font script
+$$dofile('tic-80.lua')
+
+$$ W = 640
+$$ H = 480
+
+// -------------------------
+
+unit vga_demo(
+  output! uint2 video_r,
+  output! uint2 video_g,
+  output! uint2 video_b,
+  output! uint1 video_hs,
+  output! uint1 video_vs,
+  output! uint8 audio8,
+  output! uint1 audio1,
+) {
+
+  uint16 frame = 0; // frame counter
+  uint1  go    = 0; // delayed start
+  uint16 speed = uninitialized; // speed
+
+  vga vga;
+
+  music zic(audio8 :> audio8, audio1 :> audio1, go <: go);
+
+  // distance table for rings
+  $$ C = 28
+  $$ R = 60000
+  uint10 inv_l[$C$] = {
+$$ for l=0,C-1 do
+    $math.min(1023,math.floor(R / ((l + 1) << 5)))$,
+$$ end
+  };
+
+  uint1  prev_vs = uninitialized;
+  uint8  prev_b  = uninitialized;
+  uint8  prev_r  = uninitialized;
+  uint9  th      = uninitialized;
+  uint2  effect  = 2;
+  uint1  rot_en  = 0;
+
+/*
+   #   # #
+*/
+
+$$ logo = {"1  2 1#2 1#2 1#2",
+$$         "#  # # # # # # #",
+$$         "#12# ### ##4 ##4",
+$$         "3434 3 4 432 4  "}
+$$
+$$ function to_logo_bits(str)
+$$   bitstr = ''
+$$   for i = 1, #str do
+$$      local  c = str:sub(i,i)
+$$      if     c == '#' then bitstr = '1111' .. bitstr
+$$      elseif c == ' ' then bitstr = '0000' .. bitstr
+$$      elseif c == '1' then bitstr = '0001' .. bitstr
+$$      elseif c == '2' then bitstr = '0010' .. bitstr
+$$      elseif c == '3' then bitstr = '0100' .. bitstr
+$$      elseif c == '4' then bitstr = '1000' .. bitstr
+$$      end
+$$   end
+$$   bitstr = '64b' .. bitstr
+$$   return bitstr
+$$ end
+
+  uint64 logo[] = { $to_logo_bits(logo[1])$,
+                    $to_logo_bits(logo[2])$,
+                    $to_logo_bits(logo[3])$,
+                    $to_logo_bits(logo[4])$,
+/*
+    20b01110011101111010001,
+    20b10010100101001010001,
+    20b01110010101111010101,
+    20b00010100101001011011,
+*/
+  };
+
+  always {
+
+    // shading pipeline
+    {
+      // pipeline start
+
+      int6   trix = {frame[7,1],frame[1,5] ^ {5{frame[6,1] ^ frame[7,1]}}} & {6{rot_en}};
+      int6   triy = {frame[6,1],frame[0,5] ^ {5{frame[5,1] ^ frame[6,1]}}} & {6{rot_en}};
+      int11  x    = __signed(vga.vga_x) - $W>>1$ + {{2{trix[5,1]}},trix,3b0};
+      int11  y    = __signed(vga.vga_y) - $H>>1$ + {{2{triy[5,1]}},triy,3b0};
+
+    // ->
+      // atan + len
+  $$N = 6
+  $$M = 1<<(N+1)
+      int11 cx = uninitialized;
+      int11 cy = uninitialized;
+      int8  a  = uninitialized;
+      switch ({y[10,1],x[10,1]}) // sign bits
+      {
+        case 2b11: {
+          cx = -x;
+          cy = -y;
+          a  = $M$;
+        }
+        case 2b01: {
+          cx =  y;
+          cy = -x;
+          a  = $M + (M>>1)$;
+        }
+        case 2b00: {
+          cx =  y;
+          cy = -x;
+          a  = $M + (M>>1)$;
+        }
+        case 2b10: {
+          cx =  x;
+          cy =  y;
+          a  = 0;
+        }
+      }
+    ->
+  $$for i=0,N-1,3 do
+      //        ^
+      // 3-steps at once (~1% less space)
+      $$ a_inc = math.floor(M * math.atan(1.0/(1<<(i+0))) / math.pi)
+      int11 cxtt = uninitialized;
+      int11 cytt = uninitialized;
+      int8  att = uninitialized;
+      if (cy[10,1]) { // cy < 0
+        cxtt = cx - (cy >>> $i+0$);
+        cytt = cy + (cx >>> $i+0$);
+        att  = a  + $a_inc$;
+      } else {
+        cxtt = cx + (cy >>> $i+0$);
+        cytt = cy - (cx >>> $i+0$);
+        att  = a  - $a_inc$;
+      }
+      $$ a_inc = math.floor(M * math.atan(1.0/(1<<(i+1))) / math.pi)
+      int11 cxt = uninitialized;
+      int11 cyt = uninitialized;
+      int8  at = uninitialized;
+      if (cytt[10,1]) { // cy < 0
+        cxt = cxtt - (cytt >>> $i+1$);
+        cyt = cytt + (cxtt >>> $i+1$);
+        at  = att  + $a_inc$;
+      } else {
+        cxt = cxtt + (cytt >>> $i+1$);
+        cyt = cytt - (cxtt >>> $i+1$);
+        at  = att  - $a_inc$;
+      }
+      $$ a_inc = math.floor(M * math.atan(1.0/(1<<(i+2))) / math.pi)
+      if (cyt[10,1]) { // cy < 0
+        cx = cxt - (cyt >>> $i+2$);
+        cy = cyt + (cxt >>> $i+2$);
+        a  = at  + $a_inc$;
+      } else {
+        cx = cxt + (cyt >>> $i+2$);
+        cy = cyt - (cxt >>> $i+2$);
+        a  = at  - $a_inc$;
+      }
+    ->
+  $$end
+      // now cx is the length, a is the angle [0,255]
+      uint6 cx_6 = cx >> 5;
+      uint5 cx0  = cx_6 < $C-1$ ? cx_6[0,5] : $C-2$;
+      uint5 cx1  = cx0 + 1;
+      int12 d1   = __signed({1b0,inv_l[cx0]})
+        + (((__signed({1b0,inv_l[cx1]}) - __signed({1b0,inv_l[cx0]})) * __signed({7b0,cx&5d31})) >>> 5);
+    // ->
+      uint11 d2 = d1 >> 1;
+      uint11 d3 = d2 >> 1;
+
+      /*
+        case 0: { // quads
+        case 1: { // spiral
+        case 2: { // starfield
+        case 3: { // blades
+      }
+      */
+
+      uint1 mk     = |effect;
+      // ma1: 48: 32 + 16
+      //      16:      16
+      //       1:
+      // ma2: 32:  32
+      //       8:           8
+      // ma3: 16:      16
+      //       4:               4
+      //                             v cannot be changed simply due to mul opt
+      uint6 ma1    = (effect == 1 ?  1 : 0)
+                   | (effect == 2 ? 48 : 0)
+                   | (effect == 3 ? 16 : 0);
+      uint6 ma2    = (effect == 1 ?  1 : 0)
+                   | (effect == 2 ? 32 : 0)
+                   | (effect == 3 ?  8 : 0);
+      uint6 ma3    = (effect == 1 ?  1 : 0)
+                   | (effect == 2 ? 16 : 0)
+                   | (effect == 3 ?  4 : 0);
+      uint8 rseg1  = ~(|effect) ? speed>>2 : 0;
+      uint8 rseg2  = ~(|effect) ? speed>>2 : 0;
+      uint8 rseg3  = ~(|effect) ? speed>>1 : 0;
+      uint1 cmode  = effect[1,1];
+      uint1 mmode  = effect[1,1];
+      // uint6 th     = 24; // &effect ? 32 : 24;
+      // uint6 th = speed[2,6];
+
+      uint6  ma12   = uninitialized;
+      uint8  rseg12 = uninitialized;
+      uint11 d12    = uninitialized;
+      uint1  sh12   = uninitialized;
+      if (vga.vga_x[0,1]^vga.vga_y[0,1]) {
+        ma12   = ma1;
+        rseg12 = rseg1;
+        d12    = d1;
+        sh12   = ~cmode;
+      } else {
+        ma12   = ma2;
+        rseg12 = rseg2;
+        d12    = d2;
+        sh12   = 1;
+      }
+      uint2 sh3 = {cmode,~cmode};
+
+      uint8  df_12 = d12 + speed[0,8];
+      uint8  df_3  = d3  + speed[0,8];
+
+      uint8  a_12 = a + (df_12[5,1] ? -rseg12 : rseg12);
+      uint8  a_3  = a + (df_3 [5,1] ? -rseg3  : rseg3);
+
+      uint8 dfs_12 = df_12
+                   + (ma12[0,1] ?  a_12           : 0) //  1
+                   + (ma12[3,1] ? {a_12[0,5],3b0} : 0) //  8
+                   + (ma12[4,1] ? {a_12[0,4],4b0} : 0) // 16
+                   + (ma12[5,1] ? {a_12[0,3],5b0} : 0) // 32
+                   ;
+      uint8 dfa_12 = mk ? (dfs_12 ^ 8d255) : (dfs_12 ^ a_12);
+      uint8 dfs_3  = df_3
+                  + (ma3[0,1] ?  a_3           : 0) //  1
+                  + (ma3[2,1] ? {a_3[0,6],2b0} : 0) //  4
+                  + (ma3[4,1] ? {a_3[0,4],4b0} : 0) // 16
+                  ; // NOTE: here it is either 4 /xor/ 16
+      uint8 dfa_3 = mk ? dfs_3 : (dfs_3 ^ a_3);
+
+      // pattern
+      uint6 c_12 = uninitialized; uint6 c_3 = uninitialized;
+      // cmode == 0
+      //c_12   = dfa_12[1,6];
+      //c_3    = dfa_3 [1,6];
+      // cmode == 1
+      //if (cmode) {
+      c_12 = (dfa_12[2,6] < ((th[2,6])|6b100)) || ~cmode ? dfa_12[sh12,6] : 6d0;
+      c_3  = (dfa_3 [2,6] < ((th[2,6])|6b100)) || ~cmode ? dfa_3 [ sh3,6] : 6d0;
+      //}
+      // mixing
+      uint6 frag   = uninitialized;
+      uint6 frag12 = uninitialized;
+
+      if (~dfa_12[5,1]) {frag12 = 0;          } else {frag12 = c_12;}
+      if (~dfa_3 [5,1]) {frag   = frag12 >> 1;} else {frag   = c_3; }
+
+      // mmode == 1
+      if (mmode) { // override with sum if mmode == 1
+        // frag = (frame[0,1]^vga.vga_x[1,1]^vga.vga_y[0,1]) ? c_12 : c_3;
+        frag = c_12 + c_3;
+      }
+
+      // frag = c_3;
+      // frag = c_12;
+
+      uint2 atten_l = cx[9,1]|cx[10,1] ? 2b11 : cx[7,2];
+      uint3 atten_h = atten_l + 3b1;
+
+    ->
+
+      // produces the bayer matrix value
+      uint6 p6      = {vga.vga_x[0,3],vga.vga_y[0,3]};
+      uint3 q6      = p6[0,3] ^ p6[3,3];
+      uint6 bval6   = {q6[0,1], p6[0,1], q6[1,1],p6[1,1], q6[2,1],p6[2,1]};
+
+      uint4 p4      = {vga.vga_y[0,2],vga.vga_x[0,2]};
+      uint2 q4      = p4[0,2] ^ p4[2,2];
+      uint4 bval4   = {q4[0,1],p4[0,1], q4[1,1],p4[1,1]};
+
+      uint6 c1a     = ({2b0,frag} * atten_l) >> 2; // NOTE: could replace by mux (4/5 choices)
+      uint6 c1b     = ({2b0,frag} * atten_h) >> 2;
+
+      uint6 c       = cx[9,1] || (cx[1,6] > bval6) ? c1b : c1a;
+
+      uint2 c_l     = c[4,2];
+      uint2 c_h     = c_l == 2b11 ? 2b11 : c_l+1;
+      uint2 tunnel  = (c[0,4] > bval4) ? c_h : c_l;
+
+      uint80 r_logo = {8b0,logo[vga.vga_y[5,2]],8b0};
+      uint4  p_logo = r_logo[{vga.vga_x[5,5],2b00},4];
+      uint5  lx     = {5{p_logo[0,1]|p_logo[3,1]}} ^ (vga.vga_x[0,5]);
+      uint5  ly     = vga.vga_y[0,5];
+      uint1  wedge  = (lx < ly) ^ (p_logo[2,1]|p_logo[3,1]);
+      uint1  b_logo = (|p_logo) && (wedge || (&p_logo))
+                    && (effect == 2d2) && go
+                    && (vga.vga_y>127)
+                    && (vga.vga_y<256)
+                    && (vga.vga_x[0,5]<th[1,5] || th[6,1] || th[7,1] || th[8,1])
+                    ;
+      uint1  fade   = go && frame[8,1] && frame[7,1] && frame[6,1] && (frame[0,6] > bval6);
+      uint2  final  = tunnel | {b_logo,1b0} | {2{fade}};
+
+      video_r = vga.active ? prev_r[{2d3-atten_l,1b0},2]  : 0;
+      video_g = vga.active ? final : 0;
+      video_b = vga.active ? prev_b[{atten_l,1b0},2] : 0;
+      prev_b  = {prev_b[0,6],final};
+      prev_r  = {prev_r[0,6],final};
+    }
+
+    // count frames
+    uint1 frame_tick  = (prev_vs & ~vga.vga_vs); // start of vsynch
+    uint1 next_effect = &frame[0,9];
+    frame    = frame_tick ? (frame + 1) : frame;
+    prev_vs  = vga.vga_vs;
+    // update demo state
+    th       = (next_effect     || ~go) ? 0     : (frame_tick ? (th + 1) : th); /// NOTE th is frame[0,9]?
+    speed    = ((effect != 2d2) || ~go) ? {frame,1b0} : (frame_tick ? (speed + 1 + (speed>>6)) : speed);
+    rot_en   = ((frame_tick && next_effect && (effect == 2d3)) || frame[12,1]) ? ~rot_en : rot_en;
+    effect   = ~go ? 2d2 : ((frame_tick & next_effect) ? (effect+1) : effect);
+    // delayed start
+    go       = go | frame[9,1];
+    // sync signals
+    video_hs = vga.vga_hs;
+    video_vs = vga.vga_vs;
+
+  }
+
+}
+
+// -------------------------
+
+$$  base_freq_mhz      = 25     -- FPGA frequency
+$$  audio_freq_khz     = 48.828 -- Audio frequency (target)
+$$  cycles_per_sample  = math.floor(base_freq_mhz*1000/audio_freq_khz)
+$$  print(" ===================> cycles_per_sample     : " .. cycles_per_sample)
+$$  print(" ===================> true audio freq (kHz) : " .. base_freq_mhz*1000/cycles_per_sample)
+
+unit music(
+  input   uint1 go,
+  output! int8  audio8,
+  output! uint1 audio1
+) {
+
+  uint4 bass[32] = {8,7,6,5,6,8,9,6,5,8,7,6,5,6,8,9,8,7,6,5,6,8,9,6,5,8,7,6,5,6,8,9};
+  uint2 drum[96] = {0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,0,0,0,2,1,0,0,0,0,0,0,2,1,0,0,
+                    2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,
+                    2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,2,1,0,0,};
+  uint7 keys[96] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                    16,33,33,16,17,35,33,16,33,16,0,33,35,0,11,22,22,44,44,22,46,
+                    23,22,44,44,22,44,22,46,23,11,22,33,66,66,33,70,35,33,66,66,
+                    33,0,66,70,0,44,22,16,33,22,11,12,23,11,22,22,11,22,11,23,12,
+                    11,22,};
+  //  ^ could reduce if skipping highest tones
+
+  uint7  idx          = 0;
+  uint9  clock_count  = 0;
+  uint13 rythm_count  = 0;
+  uint4  drum_inc     = uninitialized;
+  uint12 tpos         = 0;
+  int8   tri_wave <:: {tpos[11,1],tpos[4,7] ^ {7{tpos[10,1] ^ tpos[11,1]}}};
+  uint13 qpos         = 0;
+  uint6  squ_env      = 0;
+  int8   squ_wave <:: qpos[12,1] ? squ_env[3,3] : -squ_env[3,3];
+
+  always {
+    uint1 next_sample = (clock_count[0,9] == 0);
+
+    int9 sum        = (tri_wave + squ_wave);
+    audio8          = ~go ? 8b0 : (sum>>>1); // rythm_count[10,1] ? (tri_wave) : (squ_wave);
+    tpos            = next_sample ? (tpos + bass[idx[0,5]] + drum_inc) : tpos;
+    qpos            = next_sample ? (qpos + keys[idx]) : qpos;
+
+    uint1 next_inc  = next_sample && (rythm_count[0,8] == 8d0);
+    uint1 next_note = rythm_count[8,5] == 5d20;
+    idx             = next_note    ? (idx == 7d95 ? 7d32 : idx + 1) : idx;
+    drum_inc     = next_note
+                 ? {16{(|drum[idx])}}
+                 : (next_inc ? ((drum_inc != 0) ? drum_inc - 1 : 0) : drum_inc);
+    squ_env      = next_note ? {6{|keys[idx]}}
+                 : (next_inc ? ((squ_env  != 0) ? squ_env  - 1 : 0) : squ_env);
+    rythm_count  = next_note || ~go ? 0
+                 : (next_sample ? rythm_count + 1 : rythm_count);
+
+    // 1bit PWM
+    uint7 smpl = __unsigned(__signed(audio8) + __signed(8d64));
+
+    audio1      = clock_count[0,7] < smpl ? 1b1 : 1b0;
+
+    clock_count = go ? (clock_count + 1) : 0;
+  }
+}
+
+// -------------------------
+
+// VGA driver
+$include('../common/vga.si')

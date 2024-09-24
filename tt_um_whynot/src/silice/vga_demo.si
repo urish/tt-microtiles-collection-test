@@ -1,0 +1,191 @@
+// SL 2024-08-27 @sylefeb
+// ========================================================
+// MIT license
+// ========================================================
+
+// What?? Why?? ...well, why not?
+
+// VGA driver
+$include('../common/vga.si')
+
+// -------------------------
+
+// include('doomhead.si')
+
+// -------------------------
+
+unit vga_demo(
+  output! uint2 video_r,
+  output! uint2 video_g,
+  output! uint2 video_b,
+  output! uint1 video_hs,
+  output! uint1 video_vs,
+  output! uint8 audio8,
+  output! uint1 audio1,
+) {
+
+  vga vga;
+
+  music zic(audio8 :> audio8, audio1 :> audio1);
+
+$$ img = get_image_as_table('STFGOD0.tga')
+$$ pal = get_palette_as_table('STFGOD0.tga')
+$$
+uint12 sub666[16] = {
+$$ for i=1,16 do
+$$   local p = pal[i]
+$$   local b = p>>16
+$$   local g = (p>>8)&255
+$$   local r = (p)&255
+$$   print('index' .. i .. ' ' .. r .. ',' .. g .. ',' .. b)
+$$   local rgb_444  = (b>>4) + (g>>4)*16 + (r>>4)*16*16
+     12d$rgb_444$,
+$$ end
+};
+$$  local w = #img[1]
+$$  local h = #img
+uint4 doomhead[] = {
+$$  for j=1,h do
+$$    for i=1,w do
+$$      local idx  = img[j][i]
+      4d$idx$,
+$$    end
+$$  end
+};
+
+
+  uint1  prev_vs = uninitialized;
+  uint1  prev_hs = uninitialized;
+  uint10 frame   = 0;
+
+/*
+  uint32 logo[] = {
+    32b11011001100011000111,
+    32b10101010010100101001,
+    32b10001001100011000111,
+    32b00000000000000000000,
+  };
+*/
+  int8   u  = 0;
+  uint12 uT = 0;
+  int8   v  = 0;
+  uint12 vT = 0;
+
+  uint10 addr = uninitialized;
+
+  always {
+
+    //uint32 l_logo = logo[v[11,2]];
+    //uint1  select = l_logo[u[10,5],1];
+
+    //int16 ru = u - ((v * __signed(frame[0,8]))>>>8);
+    //int16 rv = ((u * __signed(frame[0,8]))>>>8) + v;
+
+    //uint1  select = ru[6,1] ^ rv[6,1];
+
+    uint5  pidA = doomhead[addr];
+    uint12 palA = sub666[pidA];
+//->
+//    uint5  pidB = doomhead[{rv[1,5],(ru[1,5] + frame[1,5])}];
+//    uint18 palB = sub666[pidB];
+//->
+//    uint5  pidC = doomhead[{rv[0,5],(ru[0,5] + frame[2,5])}];
+//    uint18 palC = sub666[pidC];
+
+    uint9  ru     = u - __signed(vT>>4);
+    uint9  rv     = __signed(uT>>4) + v;
+    uint5 i       = (ru[3,5] + frame[3,5]);
+    uint1 clip    = i<5d24;
+    uint5 j       = rv[3,5];
+    addr          = (i + {j,4b0} + {j,3b0}) & {10{clip}};
+
+    uint18 pal    = palA;
+
+    uint4 p4      = {vga.vga_y[0,2],vga.vga_x[0,2]};
+    uint2 q4      = p4[0,2] ^ p4[2,2];
+    uint4 bval4   = {q4[0,1],p4[0,1], q4[1,1],p4[1,1]} ^ {4{frame[0,1]}};
+
+    uint6 l_r     = pidA == 0 ? 0 : pal[8,4]+bval4;
+    uint6 l_g     = pidA == 0 ? 0 : pal[4,4]+bval4;
+    uint6 l_b     = pidA == 0 ? 0 : pal[0,4]+bval4;
+
+    video_r     = vga.active ? l_r[3,2] : 0;
+    video_g     = vga.active ? l_g[3,2] : 0;
+    video_b     = vga.active ? l_b[3,2] : 0;
+
+    video_hs    = vga.vga_hs;
+    video_vs    = vga.vga_vs;
+
+    uint1 frame_tick = prev_vs & ~vga.vga_vs;
+    prev_vs          = vga.vga_vs;
+    frame            = frame_tick ? (frame + 1) : frame;
+
+    // uint5 step       = {frame[1,4] ^ {5{frame[5,1]}},1b1};
+
+    uint8 tri = {frame[1,8] ^ {8{frame[9,1]}}};
+    //if (frame_tick) {
+    //  __display("tick %d tri %d",frame,tri);
+    //}
+
+    uint1 line_tick  = prev_hs & ~vga.vga_hs;
+    prev_hs          = vga.vga_hs;
+    u  = ~vga.vga_hs ? 0 : (u+1);
+    uT = ~vga.vga_hs ? 0 : (uT+__signed(tri));
+    v  = ~vga.vga_vs ? 0 : (line_tick ? (v+1) : v);
+    vT = ~vga.vga_vs ? 0 : (line_tick ? (vT+__signed(tri)) : vT);
+
+  }
+
+}
+
+$$  base_freq_mhz      = 25     -- FPGA frequency
+$$  audio_freq_khz     = 48.828 -- Audio frequency (target)
+$$  cycles_per_sample  = math.floor(base_freq_mhz*1000/audio_freq_khz)
+$$  print(" ===================> cycles_per_sample     : " .. cycles_per_sample)
+$$  print(" ===================> true audio freq (kHz) : " .. base_freq_mhz*1000/cycles_per_sample)
+
+unit music(
+  output! int8  audio8,
+  output! uint1 audio1
+) {
+
+  uint5 keys[32] = {
+    10,10,21,10, 10,18,10,10,
+    15,10,10,15, 10,10,15,15,
+    10,10,21,10, 10,18,10,10,
+    15,10,10,15, 0,0,0,0};
+
+  //  ^ could reduce if skipping highest tones
+
+  uint5  idx          = 0;
+  uint9  clock_count  = 0;
+  uint13 rythm_count  = 0;
+  uint13 qpos         = 0;
+  uint6  squ_env      = 0;
+  int8   squ_wave <:: qpos[12,1] ? squ_env[3,3] : -squ_env[3,3];
+
+  always {
+    uint1 next_sample = (clock_count[0,9] == 0);
+
+    int9 sum        = squ_wave;
+    audio8          = (sum>>>1);
+    qpos            = next_sample ? (qpos + keys[idx]) : qpos;
+
+    uint1 next_inc  = next_sample && (rythm_count[0,8] == 8d0);
+    uint1 next_note = rythm_count[8,5] == 5d25;
+    idx             = next_note ? (idx + 1) : idx;
+    squ_env      = next_note ? {6{|keys[idx]}}
+                 : (next_inc ? ((squ_env  != 0) ? squ_env  - 1 : 0) : squ_env);
+    rythm_count  = next_note ? 0
+                 : (next_sample ? rythm_count + 1 : rythm_count);
+
+    // 1bit PWM
+    uint7 smpl  = __unsigned(__signed(audio8) + __signed(8d64));
+
+    audio1      = clock_count[0,7] < smpl ? 1b1 : 1b0;
+
+    clock_count = (clock_count + 1);
+  }
+}
+
+// -------------------------

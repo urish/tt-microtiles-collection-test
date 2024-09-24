@@ -1,0 +1,8 @@
+{signal: [
+  ['SPI RX data',
+  {name: 'rst', wave: '1..0......................1'},
+  {name: 'sclk', wave: 'xxxxx0P.......x0P.......lxx'},
+  {name: 'cs_n', wave: 'xxx1.0........10.........1x'},
+  {name: 'mosi', wave: 'xxxx.01010101x.3.......xxxx', data: ['light intensity (lint)']}
+  ]]
+}

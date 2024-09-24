@@ -1,0 +1,23 @@
+name: docs
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Build Verilog if necessary from, e.g. TL-Verilog (to satisfy Verilog existence check).
+      - name: Build Verilog
+        run: |
+          cd test
+          make verilog
+
+      - name: Build docs
+        uses: TinyTapeout/tt-gds-action/docs@tt08

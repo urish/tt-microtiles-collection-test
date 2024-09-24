@@ -1,0 +1,131 @@
+|tt_um_sign_addsub
+ui_in[0] => ui_in[0].IN1
+ui_in[1] => ui_in[1].IN1
+ui_in[2] => ui_in[2].IN1
+ui_in[3] => ui_in[3].IN1
+ui_in[4] => ui_in[4].IN1
+ui_in[5] => ui_in[5].IN1
+ui_in[6] => ui_in[6].IN1
+ui_in[7] => ui_in[7].IN1
+uo_out[0] <= signed_addsub_4:A1.res_signed
+uo_out[1] <= signed_addsub_4:A1.res_signed
+uo_out[2] <= signed_addsub_4:A1.res_signed
+uo_out[3] <= signed_addsub_4:A1.res_signed
+uo_out[4] <= <GND>
+uo_out[5] <= <GND>
+uo_out[6] <= <GND>
+uo_out[7] <= <GND>
+uio_in[0] => uio_in[0].IN1
+uio_in[1] => uio_in[1].IN1
+uio_in[2] => ~NO_FANOUT~
+uio_in[3] => ~NO_FANOUT~
+uio_in[4] => ~NO_FANOUT~
+uio_in[5] => ~NO_FANOUT~
+uio_in[6] => ~NO_FANOUT~
+uio_in[7] => ~NO_FANOUT~
+uio_out[0] <= <GND>
+uio_out[1] <= <GND>
+uio_out[2] <= <GND>
+uio_out[3] <= <GND>
+uio_out[4] <= <GND>
+uio_out[5] <= <GND>
+uio_out[6] <= <GND>
+uio_out[7] <= <GND>
+uio_oe[0] <= <GND>
+uio_oe[1] <= <GND>
+uio_oe[2] <= <GND>
+uio_oe[3] <= <GND>
+uio_oe[4] <= <GND>
+uio_oe[5] <= <GND>
+uio_oe[6] <= <GND>
+uio_oe[7] <= <GND>
+ena => ~NO_FANOUT~
+clk => ~NO_FANOUT~
+rst_n => ~NO_FANOUT~
+
+
+|tt_um_sign_addsub|signed_addsub_4:A1
+a[0] => xin.DATAA
+a[0] => xin.DATAB
+a[1] => xin.DATAA
+a[1] => xin.DATAB
+a[2] => xin.DATAA
+a[2] => xin.DATAB
+a[3] => xin[3].DATAA
+a[3] => xin[3].DATAB
+b[0] => yin.DATAA
+b[0] => yin.DATAB
+b[1] => yin.DATAA
+b[1] => yin.DATAB
+b[2] => yin.DATAA
+b[2] => yin.DATAB
+b[3] => yin[3].DATAA
+b[3] => yin[3].DATAB
+sign[0] => sign[0].IN1
+sign[1] => sign[1].IN1
+res_signed[0] <= fa:fa_2c.sout
+res_signed[1] <= fa:fa_in_loop[0].fa_output.sout
+res_signed[2] <= fa:fa_in_loop[1].fa_output.sout
+res_signed[3] <= xor_fa_add_2.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|tt_um_sign_addsub|signed_addsub_4:A1|ha:ha_in_loop[0].ha_input
+a => sout.IN0
+a => cout.IN0
+b => sout.IN1
+b => cout.IN1
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+sout <= sout.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|tt_um_sign_addsub|signed_addsub_4:A1|ha:ha_in_loop[1].ha_input
+a => sout.IN0
+a => cout.IN0
+b => sout.IN1
+b => cout.IN1
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+sout <= sout.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|tt_um_sign_addsub|signed_addsub_4:A1|ha:ha_in_loop[2].ha_input
+a => sout.IN0
+a => cout.IN0
+b => sout.IN1
+b => cout.IN1
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+sout <= sout.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|tt_um_sign_addsub|signed_addsub_4:A1|fa:fa_2c
+a => stage1.IN0
+a => cout.IN0
+b => stage1.IN1
+b => cout.IN1
+c => sout.IN1
+c => cout.IN1
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+sout <= sout.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|tt_um_sign_addsub|signed_addsub_4:A1|fa:fa_in_loop[0].fa_output
+a => stage1.IN0
+a => cout.IN0
+b => stage1.IN1
+b => cout.IN1
+c => sout.IN1
+c => cout.IN1
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+sout <= sout.DB_MAX_OUTPUT_PORT_TYPE
+
+
+|tt_um_sign_addsub|signed_addsub_4:A1|fa:fa_in_loop[1].fa_output
+a => stage1.IN0
+a => cout.IN0
+b => stage1.IN1
+b => cout.IN1
+c => sout.IN1
+c => cout.IN1
+cout <= cout.DB_MAX_OUTPUT_PORT_TYPE
+sout <= sout.DB_MAX_OUTPUT_PORT_TYPE
+
+

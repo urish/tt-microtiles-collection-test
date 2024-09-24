@@ -1,0 +1,11 @@
+(executable
+	(name vgasim)
+	(libraries generator)
+	(preprocess (pps ppx_hardcaml ppx_sexp_conv))
+)
+
+(rule
+	(deps (:exe vgasim.exe))
+	(target demo.v)
+	(action (with-stdout-to %{target} (run %{exe})))
+)

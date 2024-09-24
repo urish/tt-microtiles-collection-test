@@ -1,0 +1,18 @@
+[options]
+mode cover
+append 10
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal lzc_formal.v
+prep -top lzc_formal
+read -formal fnv_1a_32_formal.v
+prep -top fnv_1a_32_formal
+
+[files]
+lzc_formal.v
+lzc.v
+fnv_1a_32.v
+fnv_1a_32_formal.v

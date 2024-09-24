@@ -1,0 +1,67 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Fri Jul 26 10:28:35 2024
+[*]
+[dumpfile] "/home/zerotoasic/Desktop/tt08/tt08-VGA-Pong-with-NES-Controllers/test/tb.vcd"
+[dumpfile_mtime] "Fri Jul 26 10:18:42 2024"
+[dumpfile_size] 110769337
+[savefile] "/home/zerotoasic/Desktop/tt08/tt08-VGA-Pong-with-NES-Controllers/test/pong.gtkw"
+[timestart] 0
+[size] 2490 1219
+[pos] -27 -24
+*-39.014366 4223470000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb.
+[treeopen] tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.
+[treeopen] tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.
+[sst_width] 297
+[signals_width] 366
+[sst_expanded] 1
+[sst_vpaned_height] 374
+@28
+tb.clk
+@800022
+tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+@28
+(0)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+(1)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+(2)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+(3)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+(4)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+(5)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+(6)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+(7)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.bidir[7:0]
+@800028
+tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.NES_Controller_Left[2:0]
+@28
+(0)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.NES_Controller_Left[2:0]
+(1)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.NES_Controller_Left[2:0]
+(2)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.NES_Controller_Left[2:0]
+@800028
+tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_Controller_Left[2:0]
+@28
+(0)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_Controller_Left[2:0]
+(1)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_Controller_Left[2:0]
+(2)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_Controller_Left[2:0]
+@800022
+tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+@28
+(0)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+(1)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+(2)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+(3)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+(4)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+(5)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+(6)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+(7)tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.NES_activity_Left[7:0]
+tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.b
+@22
+tb.uo_out[7:0]
+@29
+tb.tt_um_brandonramos_VGA_Pong_with_NES_Controllers.Pong.datapath.ballClk
+@1001200
+-group_end
+-group_end
+-group_end
+-group_end
+[pattern_trace] 1
+[pattern_trace] 0

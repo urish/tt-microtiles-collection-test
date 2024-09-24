@@ -1,0 +1,6 @@
+(library
+ (name fixederrmath)
+ (inline_tests)
+ (libraries vecmath_core sexplib fixedmath reference)
+ (preprocess
+  (pps ppx_jane)))

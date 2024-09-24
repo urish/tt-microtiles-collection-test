@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec "$(dirname "$0")/ls-sim/target/release/ls-sim" "$@"

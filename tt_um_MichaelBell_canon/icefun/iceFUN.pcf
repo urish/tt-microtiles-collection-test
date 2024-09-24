@@ -1,0 +1,18 @@
+# For iceFUN board
+
+set_io --warn-no-port clk12MHz	P7
+
+set_io --warn-no-port rst_btn	A5
+
+set_io --warn-no-port uo_out[0] B14
+set_io --warn-no-port uo_out[1] C12
+set_io --warn-no-port uo_out[2] H12
+set_io --warn-no-port uo_out[3] J12
+set_io --warn-no-port uo_out[4] K12
+set_io --warn-no-port uo_out[5] K14
+set_io --warn-no-port uo_out[6] H11
+set_io --warn-no-port uo_out[7] L12
+
+set_io --warn-no-port pwm  G1
+
+set_frequency clk12MHz 10

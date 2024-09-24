@@ -1,0 +1,15 @@
+(library
+ (name generator)
+ (inline_tests)
+ (libraries hardcaml
+  hardcaml_circuits
+  expect_test_helpers_core.expect_test_helpers_base
+  hardcaml_waveterm
+  gg
+  fixederrmath
+;  gg hardcaml hardcaml_circuits hardcaml_fixed_point hardcaml_c
+;  fixederrmath
+ )
+ (wrapped false)
+ (preprocess
+  (pps ppx_jane ppx_hardcaml)))

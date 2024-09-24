@@ -1,0 +1,6 @@
+(library
+ (name vecmath_core)
+ (modules_without_implementation types)
+ (libraries sexplib hardcaml)
+ (preprocess
+  (pps ppx_sexp_conv)))

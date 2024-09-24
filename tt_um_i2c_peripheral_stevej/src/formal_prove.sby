@@ -1,0 +1,13 @@
+[options]
+mode prove
+
+[engines]
+smtbmc
+
+[script]
+read -formal lzc_formal.v
+prep -top lzc_formal
+
+[files]
+lzc_formal.v
+lzc.v

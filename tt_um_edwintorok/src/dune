@@ -1,0 +1,30 @@
+(executable
+ (name main)
+ (libraries generator hardcaml hardcaml_circuits dune-build-info))
+
+(rule
+ (deps
+  (:exe main.exe))
+ (mode promote)
+ (action
+  (with-stdout-to
+   generated.v
+   (run %{exe}))))
+
+; could also use show -viewer none -format dot, save it and generate one from it
+; netlistsvg doesn't show internal wire names, even after renaming
+;(rule
+; (targets generated.json)
+; (deps (:verilog generated.v))
+; (action
+;  (run
+;   yosys
+;   -q
+;   -p
+;   "read_verilog %{verilog}; prep -auto-top; select *; rename -wire; rename -enumerate *; write_json; generated.json;")))
+
+;(rule
+; (target generated.svg)
+; (deps (:json generated.json))
+; (action
+;  (run npx netlistsvg %{json} -o generated.svg)))

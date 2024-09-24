@@ -1,0 +1,7 @@
+*
+!.gitignore
+!tt_fpga_top.v
+!icebreaker.pcf
+!ice_fun.pcf
+!Makefile
+!README

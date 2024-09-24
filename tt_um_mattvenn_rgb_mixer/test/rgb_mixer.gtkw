@@ -1,0 +1,37 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Fri Apr 19 11:47:34 2024
+[*]
+[dumpfile] "/home/matt/work/asic-workshop/shuttle-2404/tt06-rgb-mixer/test/tb.vcd"
+[dumpfile_mtime] "Fri Apr 19 11:46:46 2024"
+[dumpfile_size] 1279381
+[savefile] "/home/matt/work/asic-workshop/shuttle-2404/tt06-rgb-mixer/test/rgb_mixer.gtkw"
+[timestart] 0
+[size] 2115 1071
+[pos] 247 13
+*-34.799999 134300000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb.
+[sst_width] 333
+[signals_width] 389
+[sst_expanded] 1
+[sst_vpaned_height] 321
+@28
+tb.clk
+tb.rst_n
+tb.enc0_a
+tb.enc0_b
+tb.enc1_a
+tb.enc1_b
+tb.enc2_a
+tb.enc2_b
+tb.pwm0_out
+tb.pwm1_out
+tb.pwm2_out
+@200
+-
+@28
+tb.debug_mode[1:0]
+@22
+tb.debug_enc[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

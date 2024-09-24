@@ -1,0 +1,23 @@
+name: fpga
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  fpga:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Build Verilog if necessary from, e.g. TL-Verilog.
+      - name: Build Verilog
+        run: |
+          cd test
+          make verilog
+
+      - name: FPGA bitstream for TT ASIC Sim (ICE40UP5K)
+        uses: TinyTapeout/tt-gds-action/fpga/ice40up5k@tt08

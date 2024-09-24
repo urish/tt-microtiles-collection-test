@@ -1,0 +1,30 @@
+name: audio-test
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install verilator
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y verilator
+
+      - name: Run tests
+        run: |
+          cd audio-test
+          verilator --binary --autoflush -O3 -j 0 --trace-fst --timing -Wno-WIDTHEXPAND -Wno-WIDTHTRUNC -Wno-UNSIGNED tb.v ../src/l*.v
+          echo 'verilator compilation finished'
+          obj_dir/Vtb
+
+      - name: Upload waveform
+        if: success() || failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-audio
+          path: |
+            audio-test/logistic_snd.fst

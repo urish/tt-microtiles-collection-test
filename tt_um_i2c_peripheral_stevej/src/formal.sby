@@ -1,0 +1,25 @@
+[tasks]
+bmc
+cover
+prove
+
+[options]
+bmc: mode bmc
+cover: mode cover
+prove: mode prove
+depth 20
+
+[engines]
+smtbmc
+
+[script]
+read -formal lzc_formal.v
+prep -top lzc_formal
+read -formal fnv_1a_32_formal.v
+prep -top fnv_1a_32_formal
+
+[files]
+lzc_formal.v
+lzc.v
+fnv_1a_32.v
+fnv_1a_32_formal.v
