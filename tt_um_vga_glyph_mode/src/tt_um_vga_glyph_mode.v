@@ -8,10 +8,6 @@
 module tt_um_vga_glyph_mode(
 	input  wire [7:0] ui_in,    // Dedicated inputs
 	output wire [7:0] uo_out,   // Dedicated outputs
-	input  wire [7:0] uio_in,   // IOs: Input path
-	output wire [7:0] uio_out,  // IOs: Output path
-	output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-	input  wire       ena,      // always 1 when the design is powered, so you can ignore it
 	input  wire       clk,      // clock
 	input  wire       rst_n     // reset_n - low to reset
 );
@@ -27,10 +23,6 @@ module tt_um_vga_glyph_mode(
 	// TinyVGA PMOD
 	assign uo_out = {hsync, RGB[0], RGB[2], RGB[4], vsync, RGB[1], RGB[3], RGB[5]};
 
-	// Unused outputs assigned to 0.
-	assign uio_out = 0;
-	assign uio_oe  = 0;
-
 	wire [6:0] xb = pix_x[9:3];
 	wire [6:0] x_mix = {xb[3], xb[1], xb[4], xb[1], xb[6], xb[0], xb[2]};
 	wire [2:0] g_x = pix_x[2:0];
@@ -41,7 +33,7 @@ module tt_um_vga_glyph_mode(
 	wire hl;
 
 	// Suppress unused signals warning
-	wire _unused_ok = &{ena, ui_in[7:2], uio_in};
+	wire _unused_ok = &{ui_in[7:2]};
 
 	reg [9:0] counter;
 
