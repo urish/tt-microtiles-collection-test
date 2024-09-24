@@ -113,7 +113,6 @@ jobs:
           LEF: ${{ github.workspace }}/${{ matrix.project }}/runs/wokwi/final/lef/${{ matrix.project }}.lef
 
       - name: Publish build logs
-        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: GDS_${{ matrix.project }}
