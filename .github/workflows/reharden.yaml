@@ -60,6 +60,7 @@ jobs:
           - tt_um_wokwi_395615790979120129
           - tt_um_wokwi_395618714068432897
           # tt07:
+          - tt_um_PUF
           - tt_um_wokwi_399336892246401025
           - tt_um_wokwi_399447152724198401
           - tt_um_wokwi_397140982440144897
